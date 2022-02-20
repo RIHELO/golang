@@ -52,7 +52,6 @@ func factor(process int, rsaNumber *big.Int, rng *big.Int, initialValue *big.Int
     innerSquare = big.NewInt(0).Exp(innerSquareSide, big.NewInt(2), nil)
     quarterSquare = big.NewInt(0).Add(innerSquare,rsaNumber)
     foundPerfectSquare = isPerfectSquare(quarterSquare)
-    //fmt.Println("Process:",process, "innerSquareSide:", innerSquareSide)
   }
   if foundPerfectSquare {
     finalSquare := big.NewInt(0).Mul(big.NewInt(4),quarterSquare)
@@ -74,8 +73,8 @@ func main() {
   rsaNumber , _:= big.NewInt(0).SetString(rsa,10)
   //sqrtRsaNumber := big.NewInt(0).Sqrt(rsaNumber)
   numProcesses := int64(8)
-  initialValue, _ := big.NewInt(0).SetString(os.Args[2],10) // big.NewInt(1)
-  rangePerProcessor, _ := big.NewInt(0).SetString(os.Args[3],10) //big.NewInt(0).Div(sqrtRsaNumber,big.NewInt(numProcesses))
+  initialValue, _ := big.NewInt(0).SetString(os.Args[2],10) 
+  rangePerProcessor, _ := big.NewInt(0).SetString(os.Args[3],10) 
   rng := big.NewInt(0).Add(initialValue,rangePerProcessor)
   for i := 0; i < int(numProcesses); i++ {
     wg.Add(1)
