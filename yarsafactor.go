@@ -46,13 +46,15 @@ func factor(process int, rsaNumber *big.Int, rng *big.Int, initialValue *big.Int
   innerSquareSide := initialValue
   innerSquare  := big.NewInt(0).Exp(innerSquareSide, big.NewInt(2), nil)
   quarterSquare := big.NewInt(0).Add(innerSquare,rsaNumber)
-  for isPerfectSquare(quarterSquare) == false {
+  foundPerfectSquare:=isPerfectSquare(quarterSquare)
+  for foundPerfectSquare == false && innerSquareSide.Cmp(rng) <= 0{ 
     innerSquareSide.Add(innerSquareSide, big.NewInt(1))
     innerSquare = big.NewInt(0).Exp(innerSquareSide, big.NewInt(2), nil)
     quarterSquare = big.NewInt(0).Add(innerSquare,rsaNumber)
+    foundPerfectSquare = isPerfectSquare(quarterSquare)
     //fmt.Println("Process:",process, "innerSquareSide:", innerSquareSide)
   }
-  if isPerfectSquare(quarterSquare) == true {
+  if foundPerfectSquare {
     finalSquare := big.NewInt(0).Mul(big.NewInt(4),quarterSquare)
     externalSquareSizeLength := new(big.Int).Sqrt(finalSquare)
     innerSquareSide4 := big.NewInt(0).Sqrt(new(big.Int).Mul(innerSquare,big.NewInt(4)))
@@ -68,13 +70,13 @@ func factor(process int, rsaNumber *big.Int, rng *big.Int, initialValue *big.Int
 
 func main() {
   fmt.Println("Version: ", runtime.Version(), "NumCPU:", runtime.NumCPU(), "GOMAXPROCS",runtime.GOMAXPROCS(0))
-  var rsa = os.Args[1]
+  var rsa = os.Args[1] 
   rsaNumber , _:= big.NewInt(0).SetString(rsa,10)
-  sqrtRsaNumber := big.NewInt(0).Sqrt(rsaNumber)
+  //sqrtRsaNumber := big.NewInt(0).Sqrt(rsaNumber)
   numProcesses := int64(8)
-  rangePerProcessor := big.NewInt(0).Div(sqrtRsaNumber,big.NewInt(numProcesses))
-  initialValue := big.NewInt(1)
-  rng := rangePerProcessor
+  initialValue, _ := big.NewInt(0).SetString(os.Args[2],10) // big.NewInt(1)
+  rangePerProcessor, _ := big.NewInt(0).SetString(os.Args[3],10) //big.NewInt(0).Div(sqrtRsaNumber,big.NewInt(numProcesses))
+  rng := big.NewInt(0).Add(initialValue,rangePerProcessor)
   for i := 0; i < int(numProcesses); i++ {
     wg.Add(1)
     go factor(i, rsaNumber, rng, initialValue)
@@ -83,3 +85,4 @@ func main() {
   }
   wg.Wait()
 }
+
