@@ -71,7 +71,6 @@ func main() {
   fmt.Println("Version: ", runtime.Version(), "NumCPU:", runtime.NumCPU(), "GOMAXPROCS",runtime.GOMAXPROCS(0))
   var rsa = os.Args[1] 
   rsaNumber , _:= big.NewInt(0).SetString(rsa,10)
-  //sqrtRsaNumber := big.NewInt(0).Sqrt(rsaNumber)
   numProcesses := int64(8)
   initialValue, _ := big.NewInt(0).SetString(os.Args[2],10) 
   rangePerProcessor, _ := big.NewInt(0).SetString(os.Args[3],10) 
